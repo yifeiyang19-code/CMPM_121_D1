@@ -1,6 +1,7 @@
 import { createInitialGameState } from "./state.ts";
 import { manualGenerate } from "./input.ts";
 import { advanceTime, type GameState } from "./automation.ts";
+import "./style.css";
 
 // @deno-types="./asset-url.d.ts"
 import tileUrl from "./assets/tile.svg?no-inline";
@@ -26,7 +27,8 @@ app.innerHTML = `
     <button id="generate" type="button">
       Generate Energy
     </button>
-    <button id="buy-generator" type="button" disabled>
+    <span class="tooltip-wrapper">
+        <button id="buy-generator" type="button" disabled>
       Buy Generator (10 EU)
     </button>
         <button id="buy-click" type="button" disabled>
@@ -85,6 +87,32 @@ function render(state: GameState): void {
   const clickCost = getUpgradeCost(state, "click");
   const generatorPowerCost = getUpgradeCost(state, "generatorPower");
   const turbineOverhaulCost = getUpgradeCost(state, "turbineOverhaul");
+  const currentRate = state.generatorCount * state.generatorPower;
+  generatorButton!.title =
+    `Generators: ${state.generatorCount} → ${state.generatorCount + 1}\n` +
+    `Production: ${currentRate} → ${
+      (state.generatorCount + 1) * state.generatorPower
+    } EU/s`;
+
+  clickButton!.title = `Click power: ${state.clickPower} → ${
+    state.clickPower + 1
+  } EU/click`;
+
+  generatorPowerButton!.title =
+    `Generator power: ${state.generatorPower} → ${
+      state.generatorPower + 1
+    } EU/s\n` +
+    `Total production: ${currentRate} → ${
+      state.generatorCount * (state.generatorPower + 1)
+    } EU/s`;
+
+  turbineOverhaulButton!.title =
+    `Generator power: ${state.generatorPower} → ${
+      state.generatorPower + 2
+    } EU/s\n` +
+    `Total production: ${currentRate} → ${
+      state.generatorCount * (state.generatorPower + 2)
+    } EU/s`;
   energyOutput!.textContent = state.energy.toFixed(2);
   totalEnergyOutput!.textContent = state.totalEnergyProduced.toFixed(2);
   generatorsOutput!.textContent = state.generatorCount.toString();
