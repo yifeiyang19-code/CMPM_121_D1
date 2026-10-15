@@ -81,6 +81,7 @@ if (
 }
 
 function render(state: GameState): void {
+  button!.textContent = "Generate Energy (+" + state.clickPower + " EU)";
   const generatorCost = getUpgradeCost(state, "generator");
   const clickCost = getUpgradeCost(state, "click");
   const generatorPowerCost = getUpgradeCost(state, "generatorPower");
