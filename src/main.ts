@@ -3,7 +3,7 @@ import { manualGenerate } from "./input.ts";
 import { advanceTime, type GameState } from "./automation.ts";
 
 // @deno-types="./asset-url.d.ts"
-import tileUrl from "./assets/tile.svg?no-inline";
+import tileUrl from "./assets/bolt.svg?no-inline";
 import { getUpgradeCost, purchaseUpgrade } from "./upgrades.ts";
 
 let state = createInitialGameState();
@@ -24,7 +24,7 @@ app.innerHTML = `
     </section>
 
     <button id="generate" type="button">
-      Generate Energy
+      <img src = "${tileUrl}" alt = "Generate Energy" width = "200" height = "200">
     </button>
     <button id="buy-generator" type="button" disabled>
       Buy Generator (10 EU)
@@ -63,13 +63,6 @@ const generatorsOutput = document.querySelector<HTMLOutputElement>(
 const productionRateOutput = document.querySelector<HTMLOutputElement>(
   "#production-rate",
 );
-
-const image = document.createElement("img");
-image.src = tileUrl;
-image.alt = "A teal tile with a cream circle";
-image.width = 96;
-image.height = 96;
-app.append(image);
 
 if (
   !button || !generatorButton || !energyOutput || !totalEnergyOutput ||
