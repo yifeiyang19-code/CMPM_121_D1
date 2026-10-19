@@ -28,8 +28,11 @@ app.innerHTML = `
       Generate Energy
     </button>
     <span class="tooltip-wrapper">
-        <button id="buy-generator" type="button" disabled>
+    <button id="buy-generator" type="button" disabled>
       Buy Generator (10 EU)
+    </button>
+    <button id="buy-max-generators" type="button" disabled>
+      Buy Max Generators
     </button>
         <button id="buy-click" type="button" disabled>
       Upgrade Click Power (20 EU)
@@ -46,6 +49,10 @@ const button = document.querySelector<HTMLButtonElement>("#generate");
 const generatorButton = document.querySelector<HTMLButtonElement>(
   "#buy-generator",
 );
+const buyMaxGeneratorsButton = document.querySelector<HTMLButtonElement>(
+  "#buy-max-generators",
+);
+
 const clickButton = document.querySelector<HTMLButtonElement>(
   "#buy-click",
 );
@@ -77,7 +84,7 @@ if (
   !button || !generatorButton || !energyOutput || !totalEnergyOutput ||
   !generatorsOutput ||
   !productionRateOutput || !clickButton || !generatorPowerButton ||
-  !turbineOverhaulButton
+  !turbineOverhaulButton || !buyMaxGeneratorsButton
 ) {
   throw new Error("Missing required elements in the DOM");
 }
@@ -121,6 +128,8 @@ function render(state: GameState): void {
     (state.generatorCount * state.generatorPower).toString();
   generatorButton!.textContent = "Buy Generator (" + generatorCost + " EU)";
   generatorButton!.disabled = state.energy < generatorCost;
+  buyMaxGeneratorsButton!.textContent = "Buy Max Generators";
+  buyMaxGeneratorsButton!.disabled = state.energy < generatorCost;
   clickButton!.textContent = "Upgrade Click Power (" + clickCost + " EU)";
   clickButton!.disabled = state.energy < clickCost;
   generatorPowerButton!.textContent = "Upgrade Generator Power (" +
@@ -155,6 +164,25 @@ button.addEventListener("click", () => {
 generatorButton.addEventListener("click", () => {
   updateGameTime();
   state = purchaseUpgrade(state, "generator").state;
+  render(state);
+});
+
+buyMaxGeneratorsButton.addEventListener("click", () => {
+  updateGameTime();
+
+  while (state.energy >= getUpgradeCost(state, "generator")) {
+    const previousEnergy = state.energy;
+    const previousGeneratorCount = state.generatorCount;
+    state = purchaseUpgrade(state, "generator").state;
+
+    if (
+      state.energy >= previousEnergy &&
+      state.generatorCount <= previousGeneratorCount
+    ) {
+      break;
+    }
+  }
+
   render(state);
 });
 
